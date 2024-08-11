@@ -1,9 +1,9 @@
 from fastapi import FastAPI, File, UploadFile, Request, HTTPException
-from fastapi.responses import HTMLResponse, JSONResponse, FileResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 from PIL import Image
 from io import BytesIO
-import os
+from src.process_image import process_image
 
 app = FastAPI()
 
@@ -28,11 +28,7 @@ async def upload_image(file: UploadFile = File(...)):
         raise HTTPException(status_code=500, detail="Error processing image.")
 
     # Example: Convert image to grayscale
-    grayscale_image = image.convert("L")
+    detected_objects = process_image(image)
 
-    # Save the processed image to a temporary location
-    output_path = os.path.join("processed_images", file.filename)
-    os.makedirs("processed_images", exist_ok=True)
-    grayscale_image.save(output_path)
 
-    return FileResponse(output_path, media_type="image/jpeg", filename=file.filename)
+    return JSONResponse(content={"detected_objects": detected_objects})
