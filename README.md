@@ -13,8 +13,10 @@ To install the dependencies: `poetry install`
 `make run-local`
 
 ### Running the project with docker
-`make pull-image`
-`make docker-run-local`
+```
+make pull-image
+make docker-run-local
+```
 
 ## Useful links
 [Trello of the project](https://trello.com/b/bP43BY6p/gb-final-project)
