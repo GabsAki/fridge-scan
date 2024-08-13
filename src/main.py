@@ -12,23 +12,18 @@ templates = Jinja2Templates(directory="templates")
 
 @app.get("/", response_class=HTMLResponse)
 async def main(request: Request):
-    return templates.TemplateResponse("upload_form.html", {"request": request})
+    return templates.TemplateResponse("take_picture_form.html", {"request": request})
 
-@app.post("/upload-image/")
-async def upload_image(file: UploadFile = File(...)):
-    # Check if the uploaded file is an image
-    if not file.content_type.startswith("image/"):
-        raise HTTPException(status_code=400, detail="Invalid file type. Please upload an image.")
 
-    # Read the image file
-    try:
-        contents = await file.read()
-        image = Image.open(BytesIO(contents))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail="Error processing image.")
+@app.post("/process-image/")
+async def process_image_endpoint(file: UploadFile = File(...)):
+    contents = await file.read()
+    image = Image.open(BytesIO(contents))
 
-    # Example: Convert image to grayscale
+    if image.mode == 'RGBA':
+        image = image.convert('RGB')
+
+    # Apply the processing function
     detected_objects = process_image(image)
 
-
-    return JSONResponse(content={"detected_objects": detected_objects})
+    return JSONResponse(content=detected_objects)

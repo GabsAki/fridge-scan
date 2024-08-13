@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capture or Upload Image</title>
+</head>
+<body>
+    <h1>Capture or Upload Image</h1>
+    
+    <!-- Buttons to switch between options -->
+    <button id="capture-option">Use Camera</button>
+    <button id="upload-option">Upload Image</button>
+    
+    <!-- Camera Capture Section -->
+    <div id="camera-section" style="display:none;">
+        <video id="video" width="320" height="240" autoplay></video>
+        <button id="snap">Snap Photo</button>
+        <canvas id="canvas" width="320" height="240"></canvas>
+    </div>
+
+    <!-- File Upload Section -->
+    <div id="upload-section" style="display:none;">
+        <input type="file" id="file-upload" accept="image/*">
+        <button id="upload-button">Upload Image</button>
+    </div>
+
+    <!-- Placeholder for displaying the response -->
+    <div id="response"></div>
+
+    <script>
+        // Elements
+        const captureOption = document.getElementById("capture-option");
+        const uploadOption = document.getElementById("upload-option");
+        const cameraSection = document.getElementById("camera-section");
+        const uploadSection = document.getElementById("upload-section");
+
+        const video = document.getElementById('video');
+        const snap = document.getElementById("snap");
+        const canvas = document.getElementById("canvas");
+        const fileUpload = document.getElementById("file-upload");
+        const uploadButton = document.getElementById("upload-button");
+
+        // Switch to Camera Capture option
+        captureOption.addEventListener("click", () => {
+            cameraSection.style.display = "block";
+            uploadSection.style.display = "none";
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(stream => {
+                    video.srcObject = stream;
+                })
+                .catch(err => {
+                    console.error("Error accessing camera: " + err);
+                });
+        });
+
+        // Switch to File Upload option
+        uploadOption.addEventListener("click", () => {
+            cameraSection.style.display = "none";
+            uploadSection.style.display = "block";
+        });
+
+        // Capture image from camera
+        snap.addEventListener("click", () => {
+            const context = canvas.getContext("2d");
+            context.drawImage(video, 0, 0, 320, 240);
+
+            canvas.toBlob((blob) => {
+                const formData = new FormData();
+                formData.append("file", blob, "image.png");
+
+                fetch("/process-image", {
+                    method: "POST",
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    showResponse(data);
+                })
+                .catch(error => console.error("Error:", error));
+            }, 'image/png');
+        });
+
+        // Upload image from file input
+        uploadButton.addEventListener("click", () => {
+            const file = fileUpload.files[0];
+            if (file) {
+                const formData = new FormData();
+                formData.append("file", file);
+
+                fetch("/process-image", {
+                    method: "POST",
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    showResponse(data);
+                })
+                .catch(error => console.error("Error:", error));
+            } else {
+                alert("Please select a file to upload.");
+            }
+        });
+
+        // Function to display the response on the webpage
+        function showResponse(data) {
+            let responseDiv = document.getElementById("response");
+            if (!responseDiv) {
+                responseDiv = document.createElement("div");
+                responseDiv.id = "response";
+                document.body.appendChild(responseDiv);
+            }
+
+            // Create HTML content to display the list of dicts
+            let content = `<h2>Response:</h2><ul>`;
+            data.forEach(item => {
+                content += `<li>`;
+                for (const [key, value] of Object.entries(item)) {
+                    content += `<strong>${key}:</strong> ${value}<br>`;
+                }
+                content += `</li>`;
+            });
+            content += `</ul>`;
+
+            responseDiv.innerHTML = content;
+        }
+    </script>
+</body>
+</html>
