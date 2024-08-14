@@ -9,6 +9,13 @@ To enter / create the virtual environment: `poetry shell`
 
 To install the dependencies: `poetry install`
 
+### Setting up environment variables
+This project uses an OpenAI API key and a [FreeImage](https://freeimage.host/page/api) API key.
+
+Once you have both, create a `.env` file with these credentials, such as shown in the [.env.example](.env.example)
+
+Then use the command `source .env`
+
 ### Using make to run to project
 `make run-local`
 
