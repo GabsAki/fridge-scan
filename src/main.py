@@ -4,6 +4,7 @@ from fastapi.templating import Jinja2Templates
 
 from src.upload_image_to_site import upload_image_to_site
 from src.process_image_openai import process_image_with_gpt4
+from src.generate_recipes import generate_recipes_with_gemini
 
 from PIL import Image
 from io import BytesIO
@@ -36,4 +37,6 @@ async def upload_image(file: UploadFile = File(...)):
 
     food_items: list = process_image_with_gpt4(image_url)
 
-    return JSONResponse(content={"food_items": food_items})
+    recipes: str = generate_recipes_with_gemini(food_items)
+
+    return JSONResponse(content={"food_items": food_items, "recipes": recipes})
