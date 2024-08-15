@@ -19,8 +19,10 @@ resource "azurerm_app_service_plan" "asp" {
   reserved            = true
 
   sku {
-    tier = "Free"
-    size = "F1"
+    # tier = "Free"
+    # size = "F1"
+    tier = "Basic"
+    size = "B1"
   }
 }
 
@@ -41,6 +43,8 @@ resource "azurerm_key_vault" "kv" {
       "List",
       "Set",
       "Delete",
+      "Recover",
+      "Restore",
     ]
   }
 }
@@ -56,7 +60,9 @@ resource "azurerm_key_vault_access_policy" "app_access_policy" {
     "Get",
     "List",
     "Set",
-    "Delete"
+    "Delete",
+    "Recover",
+    "Restore",
   ]
 }
 
@@ -73,6 +79,12 @@ resource "azurerm_key_vault_secret" "freeimage_secret" {
   key_vault_id = azurerm_key_vault.kv.id
 }
 
+resource "azurerm_key_vault_secret" "google_secret" {
+  name         = "GOOGLE-API-KEY"
+  value        = "REPLACE" # Replace with your actual secret
+  key_vault_id = azurerm_key_vault.kv.id
+}
+
 resource "azurerm_linux_web_app" "app" {
   name                = "fridge-scan"
   location            = azurerm_resource_group.rg.location
@@ -84,6 +96,7 @@ resource "azurerm_linux_web_app" "app" {
 
     application_stack {
         docker_image_name = "gabsaki/fridge-scan"
+        docker_registry_url = "https://index.docker.io"  # URL for Docker Hub
     }
   }
 
@@ -92,6 +105,7 @@ resource "azurerm_linux_web_app" "app" {
     WEBSITES_PORT                       = "8000"
     OPENAI_KEY                          = azurerm_key_vault_secret.openai_secret.value
     FREEIMAGE_API_KEY                   = azurerm_key_vault_secret.freeimage_secret.value
+    GOOGLE_API_KEY                      = azurerm_key_vault_secret.google_secret.value
   }
 
   lifecycle {
