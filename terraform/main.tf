@@ -45,6 +45,7 @@ resource "azurerm_key_vault" "kv" {
       "Delete",
       "Recover",
       "Restore",
+      "Purge",
     ]
   }
 }
@@ -63,6 +64,7 @@ resource "azurerm_key_vault_access_policy" "app_access_policy" {
     "Delete",
     "Recover",
     "Restore",
+    "Purge",
   ]
 }
 
