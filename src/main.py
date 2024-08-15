@@ -1,9 +1,13 @@
 from fastapi import FastAPI, File, UploadFile, Request, HTTPException
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
+
+from src.upload_image_to_site import upload_image_to_site
+from src.process_image_openai import process_image_with_gpt4
+
 from PIL import Image
 from io import BytesIO
-from src.process_image import process_image
+
 
 app = FastAPI()
 
@@ -28,7 +32,8 @@ async def upload_image(file: UploadFile = File(...)):
         raise HTTPException(status_code=500, detail="Error processing image.")
 
     # Example: Convert image to grayscale
-    detected_objects = process_image(image)
+    image_url = await upload_image_to_site(image)
 
+    food_items: list = process_image_with_gpt4(image_url)
 
-    return JSONResponse(content={"detected_objects": detected_objects})
+    return JSONResponse(content={"food_items": food_items})

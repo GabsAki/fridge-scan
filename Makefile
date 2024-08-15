@@ -12,4 +12,7 @@ pull-image:
 	docker pull gabsaki/fridge-scan
 
 docker-run-local:
-	docker run -p 8000:8000 gabsaki/fridge-scan:latest
+	docker run --env-file .env -p 8000:8000 gabsaki/fridge-scan:latest
+
+tag-image:
+	docker tag gabsaki/fridge-scan:latest gabsaki/fridge-scan:0.1.0
