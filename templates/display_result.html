@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload Image</title>
+    <title>Recipe Result</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -12,7 +12,8 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            flex-direction: column;
+            padding: 2rem;
             margin: 0;
         }
 
@@ -21,27 +22,45 @@
             padding: 2rem;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            max-width: 400px;
+            max-width: 600px;
             width: 100%;
         }
 
-        h1 {
+        h1, h2, h3 {
             color: #333;
-            font-size: 1.8rem;
             margin-bottom: 1rem;
         }
 
-        input[type="file"] {
-            margin: 1rem 0;
-            padding: 0.5rem;
-            width: 100%;
-            border: 2px solid #ddd;
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        ul li {
+            background-color: #e7f5ff;
+            margin: 0.5rem 0;
+            padding: 0.7rem;
             border-radius: 5px;
-            background-color: #f9f9f9;
+        }
+
+        .recipe {
+            margin-top: 2rem;
+        }
+
+        .recipe h2 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .recipe pre {
+            background-color: #f4f4f9;
+            padding: 1rem;
+            border-radius: 5px;
+            white-space: pre-wrap;
         }
 
         button {
+            margin-top: 2rem;
             padding: 0.7rem 1.5rem;
             background-color: #007bff;
             color: white;
@@ -54,23 +73,26 @@
         button:hover {
             background-color: #0056b3;
         }
-
-        footer {
-            margin-top: 1.5rem;
-            font-size: 0.9rem;
-            color: #777;
-        }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <h1>Upload an Image</h1>
-        <form action="/upload-image/" enctype="multipart/form-data" method="post">
-            <input type="file" name="file" accept="image/*" required>
-            <button type="submit">Upload</button>
+        <h1>Detected Food Items</h1>
+        <ul>
+            {% for item in food_items %}
+            <li>{{ item }}</li>
+            {% endfor %}
+        </ul>
+
+        <div class="recipe">
+            <h2>Generated Recipe</h2>
+            <pre>{{ recipes }}</pre>
+        </div>
+
+        <form action="/" method="get">
+            <button type="submit">Upload Another Image</button>
         </form>
-        <footer>Supported formats: JPEG, PNG, GIF</footer>
     </div>
 </body>
 
