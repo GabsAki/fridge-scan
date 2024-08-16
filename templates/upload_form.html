@@ -3,12 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload Image</title>
+    <title>Fridgesnap - Upload Image</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f3e6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        h1 {
+            color: #d35400;
+        }
+        form {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        input[type="file"] {
+            margin: 20px 0;
+        }
+        button {
+            background-color: #d35400;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #e67e22;
+        }
+    </style>
 </head>
 <body>
-    <h1>Upload an Image</h1>
     <form action="/upload-image/" enctype="multipart/form-data" method="post">
-        <input type="file" name="file" accept="image/*" required>
+        <h1>Upload the picture of your Fridge</h1>
+        <input type="file" name="file" accept="image/*" capture="environment" required>
         <button type="submit">Upload</button>
     </form>
 </body>
