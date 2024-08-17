@@ -6,24 +6,17 @@ data "azurerm_client_config" "current" {}
 
 # Create a resource group
 resource "azurerm_resource_group" "rg" {
-  name     = "MyResourceGroup"
-  location = "East US"
+  name     = "FridgeScanResourceGroup"
+  location = "South Central US"
 }
 
 # Create an App Service Plan
-resource "azurerm_app_service_plan" "asp" {
-  name                = "MyAppServicePlan"
+resource "azurerm_service_plan" "asp" {
+  name                = "FridgeScanAppServicePlan"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
-  kind                = "Linux"
-  reserved            = true
-
-  sku {
-    # tier = "Free"
-    # size = "F1"
-    tier = "Basic"
-    size = "B1"
-  }
+  os_type             = "Linux"
+  sku_name            = "B1"
 }
 
 # Create an Azure Key Vault
@@ -91,7 +84,7 @@ resource "azurerm_linux_web_app" "app" {
   name                = "fridge-scan"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
-  service_plan_id = azurerm_app_service_plan.asp.id
+  service_plan_id = azurerm_service_plan.asp.id
 
   site_config {
     always_on = false
