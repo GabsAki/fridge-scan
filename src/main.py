@@ -20,7 +20,7 @@ async def main(request: Request):
     return templates.TemplateResponse("upload_form.html", {"request": request})
 
 @app.post("/upload-image/")
-async def upload_image(file: UploadFile = File(...)):
+async def upload_image(request: Request, file: UploadFile = File(...)):
     # Check if the uploaded file is an image
     if not file.content_type.startswith("image/"):
         raise HTTPException(status_code=400, detail="Invalid file type. Please upload an image.")
@@ -39,4 +39,7 @@ async def upload_image(file: UploadFile = File(...)):
 
     recipes: str = generate_recipes_with_gemini(food_items)
 
-    return JSONResponse(content={"food_items": food_items, "recipes": recipes})
+    return templates.TemplateResponse(
+        "display_result.html",
+        {"request": request, "food_items": food_items, "recipes": recipes}
+    )
